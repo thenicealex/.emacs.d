@@ -1,0 +1,12 @@
+[submodule "site-lisp/yasnippet"]
+	path = site-lisp/yasnippet
+	url = https://github.com/joaotavora/yasnippet.git
+[submodule "site-lisp/lsp-bridge"]
+	path = site-lisp/lsp-bridge
+	url = https://github.com/manateelazycat/lsp-bridge.git
+[submodule "site-lisp/copilot.el"]
+	path = site-lisp/copilot.el
+	url = https://github.com/zerolfx/copilot.el.git
+[submodule "site-lisp/color-rg"]
+	path = site-lisp/color-rg
+	url = https://github.com/manateelazycat/color-rg.git

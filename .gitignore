@@ -1,0 +1,8 @@
+/auto-save-list
+/elpa
+/lisp/.mypy_cache
+/tree-sitter
+custom.el
+history
+places
+recentf
