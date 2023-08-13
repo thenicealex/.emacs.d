@@ -1,9 +1,17 @@
 ;; -*- coding: utf-8; lexical-binding: t; -*-
-;; (setq gc-cons-percentage 0.6)
-;; (setq gc-cons-threshold most-positive-fixnum)
+;; Startup time
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (message "Emacs ready in %s with %d garbage collections."
+              (format "%.2f seconds" (float-time (time-subtract after-init-time before-init-time)))
+              gcs-done)))
+
+;; set gc-threshold after init
+(add-hook 'after-init-hook #'(lambda () (setq gc-cons-threshold most-positive-fixnum)))
 
 (setq user-init-file (or load-file-name (buffer-file-name)))
 (setq user-emacs-directory (file-name-directory user-init-file))
+(setq user-lisp-directory (concat user-emacs-directory "lisp"))
 
 (defvar alex-debug nil "Enable debug mode.")
 
@@ -12,15 +20,7 @@
 (setq ISCYGWIN (eq system-type 'cygwin) )
 (setq ISLINUX (or (eq system-type 'gnu/linux) (eq system-type 'linux)) )
 (setq EMACS28 (>= emacs-major-version 28))
-
-(defconst alex-emacs-d (file-name-as-directory user-emacs-directory)
-  "Directory of emacs.d.")
-
-(defconst alex-site-lisp-dir (concat alex-emacs-d "site-lisp")
-  "Directory of site-lisp.")
-
-(defconst alex-lisp-dir (concat alex-emacs-d "lisp")
-  "Directory of personal configuration.")
+(setq-default tab-width 4) 
 
 (setq make-backup-files nil)
 (setq auto-save-default nil)
@@ -35,7 +35,6 @@
 ;; (add-to-list 'default-frame-alist '(internal-border-width . 5))
 
 ;;; --- Encoding
-;;;
 (prefer-coding-system 'utf-8)
 (setq default-buffer-file-coding-system 'utf-8)
 (set-language-environment 'utf-8)
@@ -59,12 +58,22 @@
 (require 'package)
 (setq package-archives '(("gnu"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/")
 			 ("melpa" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/melpa/")))
-(package-initialize)
-(when (not package-archive-contents)
-  (package-refresh-contents))
+(unless (bound-and-true-p package--initialized)
+  (package-initialize))
+;; Setup 'use-package'
+(when (version< emacs-version "29.0")
+  (unless (package-installed-p 'use-package)
+    (package-refresh-contents)
+    (package-install 'use-package)))
 
-(setq custom-file (expand-file-name "~/.emacs.d/custom.el"))
-(load custom-file 'no-error 'no-message)
+;; Load the settings recorded through Emacs
+(defconst custom-file (expand-file-name "custom.el" user-emacs-directory))
+(unless (file-exists-p custom-file)
+  (if ISWIN
+      (shell-command (concat "type " custom-file))
+    (shell-command (concat "touch " custom-file))))
+(when (file-exists-p custom-file)
+  (load custom-file :noerror :nomessage))
 
 (defun alex-add-subdirs-to-load-path (lisp-dir)
   "Add sub-directories under LISP-DIR into `load-path'."
@@ -78,9 +87,9 @@
                          (directory-files lisp-dir)))
            load-path))))
 
-(add-to-list 'load-path "~/.emacs.d/lisp/")
-(require 'init-fonts)
+(add-to-list 'load-path user-lisp-directory)
 (require 'init-custom)
+(require 'init-fonts)
 (require 'eldoc-extension)
 (require 'init-evil)
 (require 'init-ui)
@@ -89,9 +98,5 @@
 (require 'init-builtin)
 (require 'init-lsp)
 (require 'init-python)
-
-
-
-(message "*** Emacs loaded in %s with %d garbage collections."
-  (format "%.2f seconds" (float-time (time-subtract after-init-time before-init-time))) gcs-done)
+(require 'init-org)
 ;;; init.el ends here

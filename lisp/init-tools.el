@@ -7,6 +7,18 @@
 	     ("M-h" . backward-kill-word))
   :custom (vertico-cycle t))
 
+;; Configure directory extension with more convenient directory navigation commands
+(use-package vertico-directory
+  :after vertico
+  :ensure nil
+  :bind (:map vertico-map
+              ("RET" . vertico-directory-enter)
+              ("DEL" . vertico-directory-delete-char)
+              ("M-DEL" . vertico-directory-delete-word) ; Mac Keyboard
+              ("C-<backspace>" . vertico-directory-delete-word)) ;; for different keyboard (c-w for all)
+  :hook
+  (rfn-eshadow-update-overlay . vertico-directory-tidy)) ; to tidy shadowed file names
+
 ;; A few more useful configurations...
 (use-package emacs
   :init
@@ -90,6 +102,13 @@
 			(set-buffer (window-buffer (minibuffer-selected-window)))
 			(or (thing-at-point 'symbol t) "")))))))
 
+(use-package consult-dir
+  :ensure t
+  :bind (("C-x C-d" . consult-dir)
+         :map minibuffer-local-completion-map
+         ("C-x C-d" . consult-dir)
+         ("C-x C-j" . consult-dir-jump-file)))
+
 ;;; Using git submodule
 (use-package color-rg
   :load-path "~/.emacs.d/site-lisp/color-rg")
@@ -133,7 +152,7 @@
   (setq treesit-auto-install 'prompt)
   (global-treesit-auto-mode))
 
-;;; copilot's dependencies
+;; copilot's dependencies
 (use-package editorconfig
   :ensure t)
 ;; Using git submodules
@@ -173,6 +192,19 @@
   :ensure t
   :commands (kill-ring-search))
 
+;; (use-package holo-layer
+;;   :load-path "~/.emacs.d/site-lisp/holo-layer"
+;;   :init
+;;   (setq holo-layer-enable-cursor-animation t)
+;;   :config
+;;   (holo-layer-enable))
+(add-to-list 'load-path "~/.emacs.d/site-lisp/holo-layer")
+(require 'holo-layer)
+(setq holo-layer-enable-cursor-animation t)
+(holo-layer-enable)
+
+
+;; Git
 (use-package magit
   :ensure t
   :commands (magit-status))
@@ -182,6 +214,10 @@
   (interactive)
   (magit-submodule-remove (list (magit-read-module-path "Remove module")) "--force" nil))
 
+(use-package git-gutter
+  :ensure t
+  :diminish
+  :hook (prog-mode . git-gutter-mode))
 
 (provide 'init-tools)
 ;;; init-tools.el ends here

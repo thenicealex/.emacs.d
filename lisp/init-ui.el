@@ -14,13 +14,14 @@
 
 (use-package doom-modeline
   :ensure t
+  :hook (after-init . doom-modeline-mode)
   :init
   (setq doom-modeline-icon nil)
-  (setq doom-modeline-minor-modes nil)
+  (setq doom-modeline-minor-modes nil
+	doom-modeline-indent-info t)
   :custom-face
   ;; Set colors to distinguish between active and inactive windows
   (mode-line ((t (:height 0.95 :background "SlateGray1"))))
-  (mode-line-inactive ((t (:height 0.95 :background "grey93"))))
-  :hook (after-init . doom-modeline-mode))
+  (mode-line-inactive ((t (:height 0.95 :background "grey93")))))
 
 (provide 'init-ui)

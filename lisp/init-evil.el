@@ -17,9 +17,9 @@
     (evil-define-key '(normal motion) 'global (kbd "f") 'avy-goto-char)
     (evil-define-key '(normal motion) 'global (kbd "s") 'avy-goto-char-2)
     (evil-define-key '(normal motion) 'global (kbd "S") 'avy-resume)
-    (evil-define-key '(normal motion) 'lsp-bridge-mode (kbd "g d") 'lsp-bridge-find-def)
     (evil-define-key '(normal motion) 'sort-tab-mode (kbd "[ b") 'sort-tab-select-prev-tab)
     (evil-define-key '(normal motion) 'sort-tab-mode (kbd "] b") 'sort-tab-select-next-tab)
+    (evil-define-key '(normal motion) 'lsp-bridge-mode (kbd "g d") 'lsp-bridge-find-def)
     (evil-define-key 'normal 'lsp-bridge-mode (kbd "g r") 'lsp-bridge-find-references)
     (evil-define-key 'normal 'lsp-bridge-mode (kbd "K") 'lsp-bridge-lookup-documentation)
     (evil-define-key 'normal 'global (kbd "C-r") 'undo-redo)
@@ -41,14 +41,6 @@
     (evil-define-key '(normal motion) 'global
       "j" "gj"
       "k" "gk")))
-
-;; (use-package undo-tree
-;;   :ensure t
-;;   :after evil
-;;   :init
-;;   (global-undo-tree-mode 1)
-;;   (setq undo-tree-auto-save-history nil)
-;;   (evil-set-undo-system 'undo-tree))
 
 (use-package general
   :ensure t
@@ -168,13 +160,14 @@ Create prefix map: +general-global-NAME. Prefix bindings in BODY with INFIX-KEY.
 
 (use-package evil-collection
   :ensure t
-  :after (evil general)
+  :after evil
   :config
   (setq evil-collection-mode-list (remove 'lispy evil-collection-mode-list))
   (evil-collection-init)
 
   (cl-loop for (mode . state) in
 	   '((org-agenda-mode . normal)
+	     (fundamental-mode . normal)
 	     (Custom-mode . emacs)
 	     (eshell-mode . emacs)
 	     (makey-key-mode . motion))

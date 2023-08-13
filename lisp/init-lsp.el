@@ -26,6 +26,7 @@
   (setq lsp-bridge-flash-region-delay 10.0)
   (global-lsp-bridge-mode)
   (setq acm-enable-quick-access t)
+  (setq lsp-bridge-enable-search-words t)
   (setq lsp-bridge-enable-completion-in-minibuffer t)
   ;; tooltip的字体大小从默认的130增加到160
   (setq lsp-bridge-lookup-doc-tooltip-font-height 160)
